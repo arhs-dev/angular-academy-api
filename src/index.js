@@ -1,0 +1,20 @@
+const express = require('express');
+const http = require('http');
+const morgan = require('morgan');
+const { port } = require('./config');
+const { moviesRouter } = require('./movies/movies.router');
+const bodyParser = require('body-parser');
+
+const app = express();
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+
+app.use('/movies', moviesRouter);
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(err.status).send(err.message);
+});
+
+const server = http.createServer(app);
+
+server.listen(port, () => console.log(`Angular academy API listening on http://localhost:${port}`));
