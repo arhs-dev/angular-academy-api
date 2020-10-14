@@ -6,10 +6,18 @@ const movies = [
   { id: '3', title: 'Avengers3' },
 ];
 
-fs.writeFile('db.mock.json', JSON.stringify(movies), (err) => {
+fs.writeFile('db/movies.json', JSON.stringify(movies), (err) => {
   if (err) {
     console.log(err);
   } else {
-    console.log('done');
+    console.log('done movies');
+  }
+});
+
+fs.writeFile('db/users.json', JSON.stringify([]), (err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log('done users');
   }
 });

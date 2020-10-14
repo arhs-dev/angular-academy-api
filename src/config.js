@@ -1,4 +1,3 @@
 const path = require('path');
-
-exports.dbUrl = path.resolve('./', 'db.mock.json');
+// exports.collection = (collection) => path.resolve('./', `db/${collection}.json`);
 exports.port = 4242;

@@ -1,55 +1,31 @@
-const fs = require('fs');
-const { resolve } = require('path');
-const { dbUrl } = require('../config.js');
+const fs = require('fs-extra');
+const { nanoid } = require('nanoid');
+const { collection } = require('../database/collection');
 
 exports.retrieveMovies = (query) => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(dbUrl, (err, data) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+  const dbCollection = collection('movies');
 
-      let movies = JSON.parse(data);
-
-      if (query) {
-        movies = movies.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
-      }
-
-      resolve(movies);
-    });
-  });
+  if (query) {
+    return dbCollection.get(query);
+  } else {
+    return dbCollection.get();
+  }
 };
 
-exports.retrieveMovie = (idOrTitle) => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(dbUrl, (err, data) => {
-      if (err) reject(err);
-      else {
-        const movies = JSON.parse(data);
-        const movie = movies.find(({ id, title }) => idOrTitle === id || idOrTitle === title);
-        resolve(movie);
-      }
-    });
-  });
+exports.retrieveMovieByid = (id) => {
+  const dbCollection = collection('movies');
+
+  return dbCollection.get({ id });
 };
 
-exports.createMovie = (movie) => {
-  return new Promise(async (resolve) => {
-    const data = fs.readFileSync(dbUrl);
+exports.createMovie = async (movie) => {
+  const dbCollection = collection('movies');
+  const movieWithId = {
+    ...movie,
+    id: nanoid(10),
+  };
 
-    const movies = JSON.parse(data);
+  const movieInDb = dbCollection.create(movieWithId);
 
-    const movieWithId = {
-      ...movie,
-      id: (movies.length + 1).toString(),
-    };
-
-    movies.push(movieWithId);
-
-    fs.writeFile(dbUrl, JSON.stringify(movies), (err) => {
-      if (err) reject(err);
-      else resolve(movieWithId);
-    });
-  });
+  return movieInDb;
 };
