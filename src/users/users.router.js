@@ -5,6 +5,11 @@ const router = require('express').Router();
 
 router.post('/', signup);
 router.post('/signin', signin);
-router.put('/:id', authorize, authorizeProfile, updateUser);
+router.put(
+  '/:id',
+  authorize,
+  (req, res, next) => authorizeProfile(req.params.id, req, res, next),
+  updateUser,
+);
 
 exports.usersRouter = router;

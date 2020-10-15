@@ -17,8 +17,8 @@ exports.authorize = (req, res, next) => {
   }
 };
 
-exports.authorizeProfile = (req, res, next) => {
-  if (req.params.id !== res.locals.id) {
+exports.authorizeProfile = (idToMatch, req, res, next) => {
+  if (idToMatch !== res.locals.id) {
     throw {
       status: StatusCodes.UNAUTHORIZED,
       message: ReasonPhrases.UNAUTHORIZED,
