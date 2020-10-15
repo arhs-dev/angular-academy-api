@@ -3,7 +3,10 @@ const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 
 exports.authorize = (req, res, next) => {
   try {
-    verifyJwt(req.get('token'));
+    const { username, id } = verifyJwt(req.get('token'));
+    res.locals.username = username;
+    res.locals.id = id;
+
     next();
   } catch (e) {
     console.log(e);
@@ -12,4 +15,15 @@ exports.authorize = (req, res, next) => {
       message: ReasonPhrases.UNAUTHORIZED,
     };
   }
+};
+
+exports.authorizeProfile = (req, res, next) => {
+  if (req.params.id !== res.locals.id) {
+    throw {
+      status: StatusCodes.UNAUTHORIZED,
+      message: ReasonPhrases.UNAUTHORIZED,
+    };
+  }
+
+  next();
 };

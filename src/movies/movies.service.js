@@ -15,8 +15,16 @@ exports.retrieveMovies = (query) => {
 
 exports.retrieveMovieByid = (id) => {
   const moviesCollection = collection('movies');
+  const movie = moviesCollection.getOne({ id });
 
-  return moviesCollection.getOne({ id });
+  if (!movie) {
+    throw {
+      status: StatusCodes.NOT_FOUND,
+      message: ReasonPhrases.NOT_FOUND,
+    };
+  }
+
+  return movie;
 };
 
 exports.createMovie = async (movie) => {

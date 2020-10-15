@@ -40,5 +40,9 @@ exports.updateUser = async (id, user) => {
   await validateUpdateUser(user);
 
   const usersCollection = collection('users');
-  return await usersCollection.updateOne({ id }, user);
+  const updated = await usersCollection.updateOne({ id }, user);
+
+  delete updated.password;
+
+  return updated;
 };

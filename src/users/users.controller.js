@@ -1,7 +1,6 @@
 const { signJwt } = require('../auth/auth.service');
 const { signupUser, signinUser, updateUser } = require('./users.service');
 const { withErrorHandling } = require('../error-handler');
-const { validateUser } = require('./user.model');
 
 exports.signup = withErrorHandling(async (req, res, next) => {
   const user = await signupUser(req.body);

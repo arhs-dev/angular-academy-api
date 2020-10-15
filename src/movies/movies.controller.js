@@ -1,6 +1,5 @@
 const { retrieveMovies, retrieveMovieByid, createMovie, updateMovie } = require('./movies.service');
 const { ReasonPhrases, StatusCodes } = require('http-status-codes');
-const { validateMovie } = require('./movie.model');
 const { withErrorHandling } = require('../error-handler');
 
 exports.getMovies = withErrorHandling(async (req, res, next) => {
@@ -18,12 +17,7 @@ exports.getMovies = withErrorHandling(async (req, res, next) => {
 exports.getMovieById = withErrorHandling(async (req, res, next) => {
   const { id } = req.params;
   const movie = await retrieveMovieByid(id);
-  if (!movie) {
-    throw {
-      status: StatusCodes.NOT_FOUND,
-      message: ReasonPhrases.NOT_FOUND,
-    };
-  }
+
   res.json(movie);
 });
 
@@ -34,6 +28,5 @@ exports.createMovie = withErrorHandling(async (req, res, next) => {
 
 exports.updateMovie = withErrorHandling(async (req, res, next) => {
   const updatedMovie = await updateMovie(req.params.id, req.body);
-
   res.json(updatedMovie);
 });
