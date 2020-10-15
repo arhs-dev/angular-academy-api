@@ -7,6 +7,7 @@ exports.signupUser = async (user) => {
 
   user.id = nanoid(10);
   const userInDb = await dbCollection.create(user);
+  delete userInDb.password;
 
   return userInDb;
 };
@@ -22,6 +23,7 @@ exports.signinUser = async (user) => {
     };
   }
   if (userInDb.password === user.password) {
+    delete userInDb.password;
     return userInDb;
   } else {
     throw {

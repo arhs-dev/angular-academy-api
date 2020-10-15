@@ -1,5 +1,6 @@
 const { retrieveMovies, retrieveMovieByid, createMovie } = require('./movies.service');
 const { ReasonPhrases, StatusCodes, getReasonPhrase, getStatusCode } = require('http-status-codes');
+const { validateMovie } = require('./movie.model');
 
 exports.getMovies = async (req, res, next) => {
   const { title } = req.query;
@@ -26,6 +27,7 @@ exports.getMovieById = async (req, res, next) => {
 };
 
 exports.createMovie = async (req, res, next) => {
+  await validateMovie(req.body);
   const movie = await createMovie(req.body);
   res.json(movie);
 };

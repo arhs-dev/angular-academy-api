@@ -5,6 +5,9 @@ const { port } = require('./config');
 const { moviesRouter } = require('./movies/movies.router');
 const bodyParser = require('body-parser');
 const { usersRouter } = require('./users/users.router');
+const { ensureCollections } = require('./database/main');
+
+ensureCollections();
 
 const app = express();
 app.use(morgan('dev'));

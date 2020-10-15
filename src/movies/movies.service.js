@@ -1,4 +1,3 @@
-const fs = require('fs-extra');
 const { nanoid } = require('nanoid');
 const { collection } = require('../database/collection');
 
@@ -15,7 +14,7 @@ exports.retrieveMovies = (query) => {
 exports.retrieveMovieByid = (id) => {
   const dbCollection = collection('movies');
 
-  return dbCollection.get({ id });
+  return dbCollection.getOne({ id });
 };
 
 exports.createMovie = async (movie) => {
