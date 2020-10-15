@@ -1,5 +1,8 @@
 const fs = require('fs-extra');
 const path = require('path');
+const { findOne } = require('../utils');
+const cloneDeep = require('clone-deep');
+const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 
 const openCollectionFile = (collectionFile) => {
   return new Promise((resolve, reject) => {
@@ -37,16 +40,7 @@ exports.collection = (collectionName) => {
 
     async getOne(query = {}) {
       let data = await openCollectionFile(collectionFile);
-      return data.find((item) => {
-        let isFound = true;
-        for (const key in query) {
-          if (!item[key] || query[key] !== item[key]) {
-            isFound = false;
-            break;
-          }
-        }
-        return isFound;
-      });
+      return findOne(data, query);
     },
 
     async create(item) {
@@ -58,6 +52,31 @@ exports.collection = (collectionName) => {
           if (err) {
             reject(err);
           } else resolve(item);
+        });
+      });
+    },
+
+    async updateOne(filter, updatedItem) {
+      const data = await openCollectionFile(collectionFile);
+      const itemToChange = findOne(data, filter);
+
+      if (!itemToChange) {
+        throw {
+          status: StatusCodes.NOT_FOUND,
+          message: ReasonPhrases.NOT_FOUND,
+        };
+      }
+
+      for (const key in updatedItem) {
+        itemToChange[key] = cloneDeep(updatedItem[key]);
+      }
+
+      return new Promise((resolve, reject) => {
+        // data has been updated by mutation
+        fs.writeFile(collectionFile, JSON.stringify(data), (err) => {
+          if (err) {
+            reject(err);
+          } else resolve(itemToChange);
         });
       });
     },

@@ -1,30 +1,42 @@
+const Joi = require('joi');
 const { nanoid } = require('nanoid');
 const { collection } = require('../database/collection');
+const { Movie, validateCreateMovie, validateUpdateMovie } = require('./movie.model');
 
 exports.retrieveMovies = (query) => {
-  const dbCollection = collection('movies');
+  const moviesCollection = collection('movies');
 
   if (query) {
-    return dbCollection.get(query);
+    return moviesCollection.get(query);
   } else {
-    return dbCollection.get();
+    return moviesCollection.get();
   }
 };
 
 exports.retrieveMovieByid = (id) => {
-  const dbCollection = collection('movies');
+  const moviesCollection = collection('movies');
 
-  return dbCollection.getOne({ id });
+  return moviesCollection.getOne({ id });
 };
 
 exports.createMovie = async (movie) => {
-  const dbCollection = collection('movies');
+  await validateCreateMovie(movie);
+
+  const moviesCollection = collection('movies');
   const movieWithId = {
     ...movie,
     id: nanoid(10),
   };
 
-  const movieInDb = dbCollection.create(movieWithId);
+  const movieInDb = moviesCollection.create(movieWithId);
 
   return movieInDb;
+};
+
+exports.updateMovie = async (id, movie) => {
+  await validateUpdateMovie(movie);
+
+  const moviesCollection = collection('movies');
+
+  return await moviesCollection.updateOne({ id }, movie);
 };

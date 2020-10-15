@@ -1,8 +1,9 @@
-const { retrieveMovies, retrieveMovieByid, createMovie } = require('./movies.service');
-const { ReasonPhrases, StatusCodes, getReasonPhrase, getStatusCode } = require('http-status-codes');
+const { retrieveMovies, retrieveMovieByid, createMovie, updateMovie } = require('./movies.service');
+const { ReasonPhrases, StatusCodes } = require('http-status-codes');
 const { validateMovie } = require('./movie.model');
+const { withErrorHandling } = require('../error-handler');
 
-exports.getMovies = async (req, res, next) => {
+exports.getMovies = withErrorHandling(async (req, res, next) => {
   const { title } = req.query;
 
   if (title) {
@@ -12,9 +13,9 @@ exports.getMovies = async (req, res, next) => {
     const movies = await retrieveMovies();
     res.json(movies);
   }
-};
+});
 
-exports.getMovieById = async (req, res, next) => {
+exports.getMovieById = withErrorHandling(async (req, res, next) => {
   const { id } = req.params;
   const movie = await retrieveMovieByid(id);
   if (!movie) {
@@ -24,10 +25,15 @@ exports.getMovieById = async (req, res, next) => {
     };
   }
   res.json(movie);
-};
+});
 
-exports.createMovie = async (req, res, next) => {
-  await validateMovie(req.body);
+exports.createMovie = withErrorHandling(async (req, res, next) => {
   const movie = await createMovie(req.body);
   res.json(movie);
-};
+});
+
+exports.updateMovie = withErrorHandling(async (req, res, next) => {
+  const updatedMovie = await updateMovie(req.params.id, req.body);
+
+  res.json(updatedMovie);
+});
