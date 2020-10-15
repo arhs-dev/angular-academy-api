@@ -91,6 +91,14 @@ exports.collection = (collectionName) => {
 
     async remove(id) {
       const data = await openCollectionFile(collectionFile);
+      const isFound = findOne(data, { id });
+
+      if (!isFound) {
+        throw {
+          status: StatusCodes.NOT_FOUND,
+          message: ReasonPhrases.NOT_FOUND,
+        };
+      }
 
       const updatedData = data.filter((item) => item.id !== id);
 

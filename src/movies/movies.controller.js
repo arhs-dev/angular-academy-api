@@ -1,4 +1,10 @@
-const { retrieveMovies, retrieveMovieByid, createMovie, updateMovie } = require('./movies.service');
+const {
+  retrieveMovies,
+  retrieveMovieByid,
+  createMovie,
+  updateMovie,
+  deleteMovie,
+} = require('./movies.service');
 const { withErrorHandling } = require('../error-handler');
 
 exports.getMovies = withErrorHandling(async (req, res, next) => {
@@ -28,4 +34,9 @@ exports.createMovie = withErrorHandling(async (req, res, next) => {
 exports.updateMovie = withErrorHandling(async (req, res, next) => {
   const updatedMovie = await updateMovie(req.params.id, req.body);
   res.json(updatedMovie);
+});
+
+exports.deleteMovie = withErrorHandling(async (req, res, next) => {
+  await deleteMovie(req.params.id);
+  res.json({ deleted: 'ok' });
 });

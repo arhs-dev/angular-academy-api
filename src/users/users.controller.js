@@ -37,5 +37,6 @@ exports.createUserFavorite = withErrorHandling(async (req, res, next) => {
 });
 
 exports.removeUserFavorite = withErrorHandling(async (req, res, next) => {
-  removeUserFavorite(req.params.id);
+  await removeUserFavorite(req.params.id);
+  res.json({ deleted: 'ok' });
 });

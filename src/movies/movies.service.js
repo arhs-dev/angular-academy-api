@@ -47,3 +47,9 @@ exports.updateMovie = async (id, movie) => {
 
   return moviesCollection.updateOne({ id }, movie);
 };
+
+exports.deleteMovie = async (id) => {
+  const moviesCollection = collection('movies');
+
+  return moviesCollection.remove(id);
+};
