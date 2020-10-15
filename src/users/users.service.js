@@ -2,6 +2,7 @@ const { nanoid } = require('nanoid');
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 const { collection } = require('../database/collection');
 const { validateCreateUser, validateUpdateUser } = require('./user.model');
+const cloneDeep = require('clone-deep');
 
 exports.signupUser = async (user) => {
   await validateCreateUser(user);
@@ -45,4 +46,35 @@ exports.updateUser = async (id, user) => {
   delete updated.password;
 
   return updated;
+};
+
+exports.getUserFavorites = async (userId) => {
+  const favoritesCollection = collection('favorite-movies');
+  const favoritesRef = await favoritesCollection.get({ $exact: { userId } });
+  const moviesCollection = collection('movies');
+  const movies = await moviesCollection.get();
+
+  return favoritesRef.map((ref) => {
+    const movie = movies.find((movie) => movie.id === ref.movieId);
+    return {
+      ...cloneDeep(movie),
+      favoriteId: ref.id,
+    };
+  });
+};
+
+exports.createUserFavorite = async (userId, movieId) => {
+  const favoriteMoviesCollection = collection('favorite-movies');
+  const favoriteMovie = {
+    userId,
+    movieId,
+    id: nanoid(10),
+  };
+
+  return favoriteMoviesCollection.create(favoriteMovie);
+};
+
+exports.removeUserFavorite = async (favoriteMovieId) => {
+  const favoriteMoviesCollection = collection('favorite-movies');
+  return favoriteMoviesCollection.remove(favoriteMovieId);
 };

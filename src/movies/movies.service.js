@@ -8,7 +8,7 @@ exports.retrieveMovies = (query) => {
   const moviesCollection = collection('movies');
 
   if (query) {
-    return moviesCollection.get(query);
+    return moviesCollection.get({ $includes: query });
   } else {
     return moviesCollection.get();
   }

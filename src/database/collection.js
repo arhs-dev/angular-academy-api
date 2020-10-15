@@ -22,13 +22,21 @@ exports.collection = (collectionName) => {
   return {
     async get(query = {}) {
       let data = await openCollectionFile(collectionFile);
-      if (Object.keys(query).length) {
-        for (const key in query) {
+      if (query.$exact) {
+        for (const key in query.$exact) {
+          data = data.filter((item) => {
+            return item[key] && item[key] === query.$exact[key];
+          });
+        }
+      }
+
+      if (query.$includes) {
+        for (const key in query.$includes) {
           data = data.filter((item) => {
             if (!item[key]) {
               return true;
             } else {
-              const valueToInclude = query[key].toLowerCase();
+              const valueToInclude = query.$includes[key].toLowerCase();
               return item[key].toLowerCase().includes(valueToInclude);
             }
           });
@@ -77,6 +85,20 @@ exports.collection = (collectionName) => {
           if (err) {
             reject(err);
           } else resolve(itemToChange);
+        });
+      });
+    },
+
+    async remove(id) {
+      const data = await openCollectionFile(collectionFile);
+
+      const updatedData = data.filter((item) => item.id !== id);
+
+      return new Promise((resolve, reject) => {
+        fs.writeFile(collectionFile, JSON.stringify(updatedData), (err) => {
+          if (err) {
+            reject(err);
+          } else resolve(id);
         });
       });
     },

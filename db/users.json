@@ -1,1 +1,6 @@
-[{"username":"heuheu","password":"123","id":"WypfdsZWB9"},{"username":"hue","password":"32801","id":"1WiqqsjHKY"},{"username":"rouli1s","password":"123123213","id":"RCdpMukm15"},{"username":"charis","password":"123123213","id":"dFkHvBzrnR"}]
+[
+  { "username": "heuheu", "password": "123", "id": "WypfdsZWB9" },
+  { "username": "hue", "password": "32801", "id": "1WiqqsjHKY" },
+  { "username": "rouli1s", "password": "123123213", "id": "RCdpMukm15" },
+  { "username": "charis", "password": "123123213", "id": "dFkHvBzrnR" }
+]
