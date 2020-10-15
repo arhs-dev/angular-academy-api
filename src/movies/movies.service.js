@@ -1,3 +1,4 @@
+const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 const Joi = require('joi');
 const { nanoid } = require('nanoid');
 const { collection } = require('../database/collection');
@@ -13,9 +14,9 @@ exports.retrieveMovies = (query) => {
   }
 };
 
-exports.retrieveMovieByid = (id) => {
+exports.retrieveMovieByid = async (id) => {
   const moviesCollection = collection('movies');
-  const movie = moviesCollection.getOne({ id });
+  const movie = await moviesCollection.getOne({ id });
 
   if (!movie) {
     throw {
@@ -36,9 +37,7 @@ exports.createMovie = async (movie) => {
     id: nanoid(10),
   };
 
-  const movieInDb = moviesCollection.create(movieWithId);
-
-  return movieInDb;
+  return moviesCollection.create(movieWithId);
 };
 
 exports.updateMovie = async (id, movie) => {
@@ -46,5 +45,5 @@ exports.updateMovie = async (id, movie) => {
 
   const moviesCollection = collection('movies');
 
-  return await moviesCollection.updateOne({ id }, movie);
+  return moviesCollection.updateOne({ id }, movie);
 };

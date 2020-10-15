@@ -1,5 +1,4 @@
 const { retrieveMovies, retrieveMovieByid, createMovie, updateMovie } = require('./movies.service');
-const { ReasonPhrases, StatusCodes } = require('http-status-codes');
 const { withErrorHandling } = require('../error-handler');
 
 exports.getMovies = withErrorHandling(async (req, res, next) => {
