@@ -38,5 +38,3 @@ exports.validateUpdateMovie = async (movie) => {
     };
   }
 };
-
-exports.Movie = Movie;
