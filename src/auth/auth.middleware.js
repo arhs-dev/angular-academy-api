@@ -16,14 +16,3 @@ exports.authorize = (req, res, next) => {
     };
   }
 };
-
-exports.authorizeProfile = (idToMatch, req, res, next) => {
-  if (idToMatch !== res.locals.userId) {
-    throw {
-      status: StatusCodes.UNAUTHORIZED,
-      message: ReasonPhrases.UNAUTHORIZED,
-    };
-  }
-
-  next();
-};

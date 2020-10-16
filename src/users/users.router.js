@@ -1,4 +1,4 @@
-const { authorize, authorizeProfile } = require('../auth/auth.middleware');
+const { authorize } = require('../auth/auth.middleware');
 const {
   signup,
   signin,
@@ -15,11 +15,6 @@ router.post('/signin', signin);
 router.put('/:id', authorize, updateUser);
 router.get('/favorites', authorize, getUserFavorites);
 router.post('/favorites', authorize, createUserFavorite);
-router.delete(
-  '/:userId/favorites/:id',
-  authorize,
-  (req, res, next) => authorizeProfile(req.params.userId, req, res, next),
-  removeUserFavorite,
-);
+router.delete('/favorites/:id', authorize, removeUserFavorite);
 
 exports.usersRouter = router;
