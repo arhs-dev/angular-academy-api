@@ -11,6 +11,13 @@ exports.ensureCollections = () => {
     const collectionPath = collectionsPath + `/${collection}.json`;
     if (!fs.existsSync(collectionPath)) {
       fs.writeFile(collectionPath, JSON.stringify([]));
+    } else {
+      const content = fs.readFileSync(collectionPath);
+      try {
+        JSON.parse(content);
+      } catch (e) {
+        fs.writeFile(collectionPath, JSON.stringify([]));
+      }
     }
   });
 };
