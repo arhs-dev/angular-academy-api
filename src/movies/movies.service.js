@@ -32,6 +32,16 @@ exports.createMovie = async (movie) => {
   await validateCreateMovie(movie);
 
   const moviesCollection = collection('movies');
+
+  const exists = await moviesCollection.getOne({ title: movie.title });
+
+  if (exists) {
+    throw {
+      status: StatusCodes.CONFLICT,
+      message: `${ReasonPhrases.CONFLICT} title exists`,
+    };
+  }
+
   const movieWithId = {
     ...movie,
     id: nanoid(10),
