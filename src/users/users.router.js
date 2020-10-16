@@ -12,24 +12,9 @@ const router = require('express').Router();
 
 router.post('/', signup);
 router.post('/signin', signin);
-router.put(
-  '/:id',
-  authorize,
-  (req, res, next) => authorizeProfile(req.params.id, req, res, next),
-  updateUser,
-);
-router.get(
-  '/:userId/favorites',
-  authorize,
-  (req, res, next) => authorizeProfile(req.params.userId, req, res, next),
-  getUserFavorites,
-);
-router.post(
-  '/:userId/favorites',
-  authorize,
-  (req, res, next) => authorizeProfile(req.params.userId, req, res, next),
-  createUserFavorite,
-);
+router.put('/:id', authorize, updateUser);
+router.get('/favorites', authorize, getUserFavorites);
+router.post('/favorites', authorize, createUserFavorite);
 router.delete(
   '/:userId/favorites/:id',
   authorize,

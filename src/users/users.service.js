@@ -65,6 +65,16 @@ exports.getUserFavorites = async (userId) => {
 
 exports.createUserFavorite = async (userId, movieId) => {
   const favoriteMoviesCollection = collection('favorite-movies');
+
+  const exists = await favoriteMoviesCollection.getOne({ userId, movieId });
+
+  if (exists) {
+    throw {
+      status: StatusCodes.CONFLICT,
+      message: `${ReasonPhrases.CONFLICT} already in favorites`,
+    };
+  }
+
   const favoriteMovie = {
     userId,
     movieId,

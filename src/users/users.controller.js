@@ -27,12 +27,12 @@ exports.updateUser = withErrorHandling(async (req, res, next) => {
 });
 
 exports.getUserFavorites = withErrorHandling(async (req, res, next) => {
-  const favorites = await getUserFavorites(req.params.userId);
+  const favorites = await getUserFavorites(res.locals.userId);
   res.json(favorites);
 });
 
 exports.createUserFavorite = withErrorHandling(async (req, res, next) => {
-  const favoriteMovie = await createUserFavorite(req.params.userId, req.body.movieId);
+  const favoriteMovie = await createUserFavorite(res.locals.userId, req.body.movieId);
   res.json(favoriteMovie);
 });
 

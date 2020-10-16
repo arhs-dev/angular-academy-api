@@ -6,10 +6,12 @@ const { moviesRouter } = require('./movies/movies.router');
 const bodyParser = require('body-parser');
 const { usersRouter } = require('./users/users.router');
 const { ensureCollections } = require('./database/main');
+const cors = require('cors');
 
 ensureCollections();
 
 const app = express();
+app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 

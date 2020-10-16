@@ -5,7 +5,7 @@ exports.authorize = (req, res, next) => {
   try {
     const { username, id } = verifyJwt(req.get('token'));
     res.locals.username = username;
-    res.locals.id = id;
+    res.locals.userId = id;
 
     next();
   } catch (e) {
@@ -18,7 +18,7 @@ exports.authorize = (req, res, next) => {
 };
 
 exports.authorizeProfile = (idToMatch, req, res, next) => {
-  if (idToMatch !== res.locals.id) {
+  if (idToMatch !== res.locals.userId) {
     throw {
       status: StatusCodes.UNAUTHORIZED,
       message: ReasonPhrases.UNAUTHORIZED,
