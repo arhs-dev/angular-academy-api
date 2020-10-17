@@ -83,10 +83,29 @@ exports.deleteUserById = async (userId) => {
 
 exports.createUserFavorite = async (userId, movieId) => {
   const favoriteMoviesCollection = collection('favorite-movies');
+  const usersCollection = collection('users');
+  const moviesCollection = collection('movies');
 
-  const exists = await favoriteMoviesCollection.getOne({ userId, movieId });
+  const userExists = await usersCollection.getOne({ id: userId });
+  const movieExists = await moviesCollection.getOne({ id: movieId });
 
-  if (exists) {
+  if (!userExists) {
+    throw {
+      status: StatusCodes.NOT_FOUND,
+      message: `${ReasonPhrases.NOT_FOUND} user not found`,
+    };
+  }
+
+  if (!movieExists) {
+    throw {
+      status: StatusCodes.NOT_FOUND,
+      message: `${ReasonPhrases.NOT_FOUND} movie not found`,
+    };
+  }
+
+  const favoriteExists = await favoriteMoviesCollection.getOne({ userId, movieId });
+
+  if (favoriteExists) {
     throw {
       status: StatusCodes.CONFLICT,
       message: `${ReasonPhrases.CONFLICT} already in favorites`,
