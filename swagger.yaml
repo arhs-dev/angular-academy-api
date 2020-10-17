@@ -149,6 +149,52 @@ paths:
       security:
         - jwt: []
 
+  /users/favorites:
+    get:
+      tags:
+        - 'user'
+      summary: 'Get the favorite movies of the logged in user'
+      produces:
+        - 'application/json'
+      responses:
+        '200':
+          description: 'successful operation'
+          schema:
+            $ref: '#/definitions/FavoriteMovie'
+        '401':
+          description: 'Unauthorized'
+      security:
+        - jwt: []
+    post:
+      tags:
+        - 'user'
+      summary: 'Add a movie to the logged in user favorites'
+      produces:
+        - 'application/json'
+      responses:
+        '200':
+          description: 'successful operation'
+          schema:
+            $ref: '#/definitions/FavoriteMovieCorrelation'
+        '401':
+          description: 'Unauthorized'
+      security:
+        - jwt: []
+  /users/favorites/{favoriteId}:
+    delete:
+      tags:
+        - 'user'
+      summary: 'Remove a movie from the logged in user favorites using the favorite id'
+      produces:
+        - 'application/json'
+      responses:
+        '200':
+          description: 'successful operation'
+        '401':
+          description: 'Unauthorized'
+      security:
+        - jwt: []
+
   /movies:
     get:
       tags:
@@ -309,3 +355,23 @@ definitions:
       description:
         type: string
         example: 'After the devastating events of...'
+  FavoriteMovie:
+    allOf:
+      - $ref: '#/definitions/Movie'
+      - type: 'object'
+        properties:
+          favoriteId:
+            type: string
+            example: '3ta1hbPWPx'
+  FavoriteMovieCorrelation:
+    type: 'object'
+    properties:
+      id:
+        type: string
+        example: '3ta1hbPWPx'
+      movieId:
+        type: string
+        example: 'P08ml5FIyD'
+      userId:
+        type: string
+        example: 'yE4X6ADFP7'
