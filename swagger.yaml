@@ -3,8 +3,10 @@ info:
   title: 'Angular Academy API'
 host: 'localhost:4242'
 tags:
-  - name: 'User'
+  - name: 'user'
     description: 'Operations about user'
+  - name: 'movies'
+    description: 'Operations about movies'
 
 paths:
   /users:
@@ -18,18 +20,24 @@ paths:
         - in: 'body'
           name: 'body'
           description: 'user info'
-          required:
-            - username
-            - password
-          properties:
-            firstname:
-              type: string
-            lastname:
-              type: string
-            username:
-              type: string
-            password:
-              type: string
+          required: true
+          schema:
+            required:
+              - username
+              - password
+            properties:
+              firstname:
+                type: string
+                example: 'John'
+              lastname:
+                type: string
+                example: 'Smith'
+              username:
+                type: string
+                example: 'SJ100'
+              password:
+                type: string
+                example: 'Strong password'
       responses:
         '200':
           description: 'The created user and the jwt'
@@ -53,14 +61,18 @@ paths:
         - in: 'body'
           name: 'body'
           description: 'user credentials'
-          required:
-            - username
-            - password
-          properties:
-            username:
-              type: string
-            password:
-              type: string
+          required: true
+          schema:
+            required:
+              - username
+              - password
+            properties:
+              username:
+                type: string
+                example: 'SJ100'
+              password:
+                type: string
+                example: 'The correct password'
       responses:
         '200':
           description: 'successful operation'
@@ -105,12 +117,16 @@ paths:
             properties:
               firstname:
                 type: string
+                example: 'Dimitri'
               lastname:
                 type: string
+                example: 'Foobar'
               username:
                 type: string
+                example: 'Superman090'
               password:
                 type: string
+                example: 'A stronger password'
       responses:
         '200':
           description: 'successful operation'
@@ -133,6 +149,133 @@ paths:
       security:
         - jwt: []
 
+  /movies:
+    get:
+      tags:
+        - 'movies'
+      summary: 'Get movies'
+      produces:
+        - 'application/json'
+      parameters:
+        - in: 'query'
+          name: 'title'
+          description: 'The title of the movies to search for (includes)'
+      responses:
+        '200':
+          description: 'The movies filtered by title'
+          schema:
+            type: 'array'
+            items:
+              $ref: '#/definitions/Movie'
+        '401':
+          description: 'Not authorized'
+      security:
+        - jwt: []
+    post:
+      tags:
+        - 'movies'
+      summary: 'Create movie'
+      produces:
+        - 'application/json'
+      parameters:
+        - in: 'body'
+          name: 'body'
+          required:
+            - title
+          description: 'The new movie to add'
+          schema:
+            required:
+              - title
+            properties:
+              title:
+                type: string
+                example: 'Avengers: Endgame'
+              description:
+                type: string
+                example: 'After the devastating events of...'
+      responses:
+        '200':
+          description: 'The created movie'
+          schema:
+            $ref: '#/definitions/Movie'
+        '401':
+          description: 'Unauthorized'
+      security:
+        - jwt: []
+  /movies/{movieId}:
+    get:
+      tags:
+        - 'movies'
+      summary: 'Get movie by id'
+      produces:
+        - 'application/json'
+      parameters:
+        - in: 'path'
+          name: 'movieId'
+          description: 'The id of the movie to fetch'
+      responses:
+        '200':
+          description: 'The movie with provided id'
+          schema:
+            $ref: '#/definitions/Movie'
+        '401':
+          description: 'Not authorized'
+      security:
+        - jwt: []
+    put:
+      tags:
+        - 'movies'
+      summary: 'Update movie'
+      produces:
+        - 'application/json'
+      parameters:
+        - in: 'path'
+          name: 'movieId'
+          description: 'The id of the movie to update'
+        - in: 'body'
+          name: 'body'
+          description: 'The updated movie'
+          required: true
+          schema:
+            properties:
+              title:
+                type: string
+                example: 'Avengers: Endgame'
+              description:
+                type: string
+                example: 'After the devastating events of...'
+      responses:
+        '200':
+          description: 'The updated movie'
+          schema:
+            $ref: '#/definitions/Movie'
+        '401':
+          description: 'Unauthorized'
+        '404':
+          description: 'Movie not found'
+      security:
+        - jwt: []
+    delete:
+      tags:
+        - 'movies'
+      summary: 'Delete movie'
+      produces:
+        - 'application/json'
+      parameters:
+        - in: 'path'
+          name: 'movieId'
+          description: 'The id of the movie to delete'
+
+      responses:
+        '200':
+          description: 'Deleted successfully'
+        '401':
+          description: 'Unauthorized'
+        '404':
+          description: 'Movie not found'
+      security:
+        - jwt: []
+
 securityDefinitions:
   jwt:
     type: apiKey
@@ -144,9 +287,25 @@ definitions:
     properties:
       id:
         type: 'string'
+        example: 'OCgEyaGcC8'
       username:
         type: 'string'
+        example: 'SJ100'
       firstName:
         type: 'string'
+        example: 'John'
       lastName:
         type: 'string'
+        example: Smith
+  Movie:
+    type: 'object'
+    properties:
+      id:
+        type: string
+        example: 'jCEMsgluBx'
+      title:
+        type: string
+        example: 'Avengers: Endgame'
+      description:
+        type: string
+        example: 'After the devastating events of...'
