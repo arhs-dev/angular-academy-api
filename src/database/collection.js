@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { findOne } = require('../utils');
+const { findOne, exactMatch, includesMatch } = require('../utils');
 const cloneDeep = require('clone-deep');
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 
@@ -22,25 +22,13 @@ exports.collection = (collectionName) => {
   return {
     async get(query = {}) {
       let data = await openCollectionFile(collectionFile);
+
       if (query.$exact) {
-        for (const key in query.$exact) {
-          data = data.filter((item) => {
-            return item[key] && item[key] === query.$exact[key];
-          });
-        }
+        data = data.filter((item) => exactMatch(item, query.$exact));
       }
 
       if (query.$includes) {
-        for (const key in query.$includes) {
-          data = data.filter((item) => {
-            if (!item[key]) {
-              return true;
-            } else {
-              const valueToInclude = query.$includes[key].toLowerCase();
-              return item[key].toLowerCase().includes(valueToInclude);
-            }
-          });
-        }
+        data = data.filter((item) => includesMatch(item, query.$includes));
       }
 
       return data;
@@ -107,6 +95,26 @@ exports.collection = (collectionName) => {
           if (err) {
             reject(err);
           } else resolve(id);
+        });
+      });
+    },
+
+    async removeMultiple(query) {
+      let data = await openCollectionFile(collectionFile);
+
+      if (query.$exact) {
+        data = data.filter((item) => !exactMatch(item, query.$exact));
+      }
+
+      if (query.$includes) {
+        data = data.filter((item) => !includesMatch(item, query.$includes));
+      }
+
+      return new Promise((resolve, reject) => {
+        fs.writeFile(collectionFile, JSON.stringify(data), (err) => {
+          if (err) {
+            reject(err);
+          } else resolve('ok');
         });
       });
     },

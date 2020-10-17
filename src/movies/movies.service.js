@@ -1,8 +1,7 @@
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
-const Joi = require('joi');
 const { nanoid } = require('nanoid');
 const { collection } = require('../database/collection');
-const { Movie, validateCreateMovie, validateUpdateMovie } = require('./movie.model');
+const { validateCreateMovie, validateUpdateMovie } = require('./movie.model');
 
 exports.retrieveMovies = (query) => {
   const moviesCollection = collection('movies');
@@ -60,6 +59,8 @@ exports.updateMovie = async (id, movie) => {
 
 exports.deleteMovie = async (id) => {
   const moviesCollection = collection('movies');
+  const favoriteMoviesCollection = collection('favorite-movies');
 
+  await favoriteMoviesCollection.removeMultiple({ $exact: { movieId: id } });
   return moviesCollection.remove(id);
 };

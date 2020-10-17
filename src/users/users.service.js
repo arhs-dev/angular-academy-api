@@ -83,6 +83,10 @@ exports.getUserFavorites = async (userId) => {
 
 exports.deleteUserById = async (userId) => {
   const usersCollection = collection('users');
+
+  const favoriteMoviesCollection = collection('favorite-movies');
+  await favoriteMoviesCollection.removeMultiple({ $exact: { userId } });
+
   return usersCollection.remove(userId);
 };
 
