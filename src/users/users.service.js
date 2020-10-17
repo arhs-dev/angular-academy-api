@@ -24,15 +24,6 @@ exports.signupUser = async (user) => {
 
   const usersCollection = collection('users');
 
-  const exists = await usersCollection.getOne({ username: user.username });
-
-  if (exists) {
-    throw {
-      status: StatusCodes.CONFLICT,
-      message: `${ReasonPhrases.CONFLICT} username exists`,
-    };
-  }
-
   user.id = nanoid(10);
   const userInDb = await usersCollection.create(user);
   delete userInDb.password;

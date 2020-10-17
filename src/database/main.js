@@ -2,12 +2,16 @@ const path = require('path');
 const fs = require('fs-extra');
 const collectionsPath = path.resolve('./', `db`);
 
-const collections = ['users', 'movies', 'favorite-movies'];
+exports.collections = [
+  { id: 'users', _uniques: ['id', 'username'] },
+  { id: 'movies', _uniques: ['id', 'title'] },
+  { id: 'favorite-movies', _uniques: ['id'] },
+];
 
 exports.ensureCollections = () => {
   fs.ensureDir(collectionsPath);
 
-  collections.forEach((collection) => {
+  this.collections.forEach(({ id: collection }) => {
     const collectionPath = collectionsPath + `/${collection}.json`;
     if (!fs.existsSync(collectionPath)) {
       fs.writeFile(collectionPath, JSON.stringify([]));

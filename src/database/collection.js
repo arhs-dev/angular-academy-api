@@ -3,6 +3,7 @@ const path = require('path');
 const { findOne, exactMatch, includesMatch } = require('../utils');
 const cloneDeep = require('clone-deep');
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
+const { collections } = require('./main');
 
 const openCollectionFile = (collectionFile) => {
   return new Promise((resolve, reject) => {
@@ -18,6 +19,7 @@ const openCollectionFile = (collectionFile) => {
 
 exports.collection = (collectionName) => {
   const collectionFile = path.resolve('./', `db/${collectionName}.json`);
+  const collectionRef = collections.find(({ id }) => id === collectionName);
 
   return {
     async get(query = {}) {
@@ -41,6 +43,16 @@ exports.collection = (collectionName) => {
 
     async create(item) {
       let data = await openCollectionFile(collectionFile);
+
+      for (const uniqueKey of collectionRef._uniques) {
+        if (findOne(data, { [uniqueKey]: item[uniqueKey] })) {
+          throw {
+            status: StatusCodes.CONFLICT,
+            message: `${ReasonPhrases.CONFLICT} ${uniqueKey} exists`,
+          };
+        }
+      }
+
       data.push(item);
 
       return new Promise((resolve, reject) => {
@@ -61,6 +73,15 @@ exports.collection = (collectionName) => {
           status: StatusCodes.NOT_FOUND,
           message: ReasonPhrases.NOT_FOUND,
         };
+      }
+
+      for (const uniqueKey of collectionRef._uniques) {
+        if (findOne(data, { [uniqueKey]: updatedItem[uniqueKey] })) {
+          throw {
+            status: StatusCodes.CONFLICT,
+            message: `${ReasonPhrases.CONFLICT} ${uniqueKey} exists`,
+          };
+        }
       }
 
       for (const key in updatedItem) {
