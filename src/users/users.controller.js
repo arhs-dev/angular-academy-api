@@ -6,6 +6,8 @@ const {
   getUserFavorites,
   createUserFavorite,
   removeUserFavorite,
+  getUserById,
+  deleteUserById,
 } = require('./users.service');
 const { withErrorHandling } = require('../error-handler');
 
@@ -21,9 +23,19 @@ exports.signin = withErrorHandling(async (req, res, next) => {
   res.json({ user, jwt });
 });
 
+exports.getUserDetails = withErrorHandling(async (req, res, next) => {
+  const user = await getUserById(res.locals.userId);
+  res.json(user);
+});
+
 exports.updateUser = withErrorHandling(async (req, res, next) => {
-  const updatedUser = await updateUser(req.params.id, req.body);
+  const updatedUser = await updateUser(res.locals.userId, req.body);
   res.json(updatedUser);
+});
+
+exports.deleteUserById = withErrorHandling(async (req, res, next) => {
+  await deleteUserById(res.locals.userId, req.body);
+  res.json({ deleted: 'ok' });
 });
 
 exports.getUserFavorites = withErrorHandling(async (req, res, next) => {

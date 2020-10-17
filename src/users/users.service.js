@@ -4,6 +4,21 @@ const { collection } = require('../database/collection');
 const { validateCreateUser, validateUpdateUser } = require('./user.model');
 const cloneDeep = require('clone-deep');
 
+exports.getUserById = async (id) => {
+  const usersCollection = collection('users');
+
+  const user = await usersCollection.getOne({ id });
+  if (!user) {
+    throw {
+      status: StatusCodes.NOT_FOUND,
+      message: `${ReasonPhrases.NOT_FOUND}. Most probably the account was deleted`,
+    };
+  }
+
+  delete user.password;
+  return user;
+};
+
 exports.signupUser = async (user) => {
   await validateCreateUser(user);
 
@@ -29,21 +44,15 @@ exports.signinUser = async (user) => {
   const usersCollection = collection('users');
 
   const userInDb = await usersCollection.getOne({ username: user.username });
-  if (!userInDb) {
+  if (!userInDb || userInDb.password !== user.password) {
     throw {
-      status: StatusCodes.NOT_FOUND,
-      message: ReasonPhrases.NOT_FOUND,
+      status: StatusCodes.BAD_REQUEST,
+      message: ReasonPhrases.BAD_REQUEST,
     };
   }
-  if (userInDb.password === user.password) {
-    delete userInDb.password;
-    return userInDb;
-  } else {
-    throw {
-      status: StatusCodes.UNAUTHORIZED,
-      message: ReasonPhrases.UNAUTHORIZED,
-    };
-  }
+
+  delete userInDb.password;
+  return userInDb;
 };
 
 exports.updateUser = async (id, user) => {
@@ -70,6 +79,11 @@ exports.getUserFavorites = async (userId) => {
       favoriteId: ref.id,
     };
   });
+};
+
+exports.deleteUserById = async (userId) => {
+  const usersCollection = collection('users');
+  return usersCollection.remove(userId);
 };
 
 exports.createUserFavorite = async (userId, movieId) => {
