@@ -39,7 +39,7 @@ exports.deleteUserById = withErrorHandling(async (req, res, next) => {
 });
 
 exports.getUserFavorites = withErrorHandling(async (req, res, next) => {
-  const favorites = await getUserFavorites(res.locals.userId);
+  const favorites = await getUserFavorites(res.locals.userId, req.query.title);
   res.json(favorites);
 });
 

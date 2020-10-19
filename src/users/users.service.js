@@ -57,19 +57,21 @@ exports.updateUser = async (id, user) => {
   return updated;
 };
 
-exports.getUserFavorites = async (userId) => {
+exports.getUserFavorites = async (userId, title = '') => {
   const favoritesCollection = collection('favorite-movies');
   const favoritesRef = await favoritesCollection.get({ $exact: { userId } });
   const moviesCollection = collection('movies');
-  const movies = await moviesCollection.get();
+  const movies = await moviesCollection.get({ $includes: { title } });
 
-  return favoritesRef.map((ref) => {
-    const movie = movies.find((movie) => movie.id === ref.movieId);
-    return {
-      ...cloneDeep(movie),
-      favoriteId: ref.id,
-    };
-  });
+  return favoritesRef.reduce((favoriteMovies, current) => {
+    const movie = movies.find(({ id }) => id === current.movieId);
+
+    if (!movie) {
+      return favoriteMovies;
+    }
+
+    return [...favoriteMovies, { ...movie, favoriteId: current.id }];
+  }, []);
 };
 
 exports.deleteUserById = async (userId) => {
