@@ -5,6 +5,7 @@ const baseSchema = () => {
   return joi.object({
     title: joi.string().trim(),
     description: joi.string().trim(),
+    dateReleased: joi.date().iso().max('now'),
   });
 };
 

@@ -34,8 +34,8 @@ exports.updateUser = withErrorHandling(async (req, res, next) => {
 });
 
 exports.deleteUserById = withErrorHandling(async (req, res, next) => {
-  await deleteUserById(res.locals.userId, req.body);
-  res.json({ deleted: 'ok' });
+  const deletedUser = await deleteUserById(res.locals.userId, req.body);
+  res.json(deletedUser);
 });
 
 exports.getUserFavorites = withErrorHandling(async (req, res, next) => {
@@ -49,6 +49,6 @@ exports.createUserFavorite = withErrorHandling(async (req, res, next) => {
 });
 
 exports.removeUserFavorite = withErrorHandling(async (req, res, next) => {
-  await removeUserFavorite(req.params.id);
-  res.json({ deleted: 'ok' });
+  const removed = await removeUserFavorite(req.params.id);
+  res.json(removed);
 });
