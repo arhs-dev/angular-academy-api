@@ -9,18 +9,18 @@ exports.collections = [
 ];
 
 exports.ensureCollections = () => {
-  fs.ensureDir(collectionsPath);
+  fs.ensureDirSync(collectionsPath);
 
   this.collections.forEach(({ id: collection }) => {
     const collectionPath = collectionsPath + `/${collection}.json`;
     if (!fs.existsSync(collectionPath)) {
-      fs.writeFile(collectionPath, JSON.stringify([]));
+      fs.writeFileSync(collectionPath, JSON.stringify([]));
     } else {
       const content = fs.readFileSync(collectionPath);
       try {
         JSON.parse(content);
       } catch (e) {
-        fs.writeFile(collectionPath, JSON.stringify([]));
+        fs.writeFileSync(collectionPath, JSON.stringify([]));
       }
     }
   });
