@@ -100,22 +100,22 @@ exports.collection = (collectionName) => {
 
     async remove(id) {
       const data = await openCollectionFile(collectionFile);
-      const isFound = findOne(data, { id });
+      const itemToDelete = findOne(data, { id });
 
-      if (!isFound) {
+      if (!itemToDelete) {
         throw {
           status: StatusCodes.NOT_FOUND,
           message: ReasonPhrases.NOT_FOUND,
         };
       }
 
-      const updatedData = data.filter((item) => item.id !== id);
+      const updatedData = data.filter((item) => item !== itemToDelete);
 
       return new Promise((resolve, reject) => {
         fs.writeFile(collectionFile, JSON.stringify(updatedData), (err) => {
           if (err) {
             reject(err);
-          } else resolve(id);
+          } else resolve(itemToDelete);
         });
       });
     },
