@@ -30,4 +30,9 @@ app.use((err, req, res, next) => {
 
 const server = http.createServer(app);
 
-server.listen(port, () => console.log(`Angular academy API listening on http://localhost:${port}`));
+server.listen(port, () =>
+  console.log(`
+  Angular academy API listening on http://localhost:${port}
+  Docs at http://localhost:${port}/api-docs  
+`),
+);
