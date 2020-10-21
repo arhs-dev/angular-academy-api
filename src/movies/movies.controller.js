@@ -37,6 +37,6 @@ exports.updateMovie = withErrorHandling(async (req, res, next) => {
 });
 
 exports.deleteMovie = withErrorHandling(async (req, res, next) => {
-  await deleteMovie(req.params.id);
-  res.json({ deleted: 'ok' });
+  const deletedMovie = await deleteMovie(req.params.id);
+  res.json(deletedMovie);
 });
