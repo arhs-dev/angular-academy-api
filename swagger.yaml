@@ -177,6 +177,18 @@ paths:
       summary: 'Add a movie to the logged in user favorites'
       produces:
         - 'application/json'
+      parameters:
+        - in: 'body'
+          name: 'body'
+          description: 'The movie id'
+          required: true
+          schema:
+            required:
+              - movieId
+            properties:
+              movieId:
+                type: string
+                example: 'P08ml5FIyD'
       responses:
         '200':
           description: 'successful operation'
