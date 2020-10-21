@@ -162,6 +162,10 @@ paths:
       summary: 'Get the favorite movies of the logged in user'
       produces:
         - 'application/json'
+      parameters:
+        - in: 'query'
+          name: 'title'
+          description: 'The title of the favorite movies to search for (includes)'
       responses:
         '200':
           description: 'successful operation'
@@ -207,6 +211,10 @@ paths:
       summary: 'Remove a movie from the logged in user favorites using the favorite id'
       produces:
         - 'application/json'
+      parameters:
+        - in: 'path'
+          name: 'favoriteId'
+          description: 'The id of the favorite to delete'
       responses:
         '200':
           description: 'successful operation'
